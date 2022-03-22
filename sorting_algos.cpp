@@ -3,8 +3,11 @@
 #include <chrono>
 #include <iostream>
 
-void print_array(int * array, int array_size) {
-    for(int ii = 0; ii < array_size; ii++) {
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+
+void print_array(std::vector<int> & array) {
+    for(size_t ii = 0; ii < array.size(); ii++) {
         std::cout << array[ii] << "\t";
     }
     std::cout << std::endl;
@@ -19,11 +22,11 @@ static void finish_timing(auto t1) {
     std::cout << ms_double.count() << " ms" << std::endl;
 }
 
-void bubble_sort(int * array, int array_size) {
+void bubble_sort(std::vector<int> & array) {
     std::cout << "Bubble sort: \t";
     int temp;
-    for(int ii = 0; ii < array_size; ii++) {
-        for(int jj = ii + 1; jj < array_size; jj++) {
+    for(size_t ii = 0; ii < array.size(); ii++) {
+        for(size_t jj = ii + 1; jj < array.size(); jj++) {
             if(array[jj] < array[ii]) {
                 temp = array[ii];
                 array[ii] = array[jj];
@@ -33,16 +36,16 @@ void bubble_sort(int * array, int array_size) {
     }
 }
 
-void timed_bubble_sort(int * array, int array_size) {
+void timed_bubble_sort(std::vector<int> & array) {
     auto t1 = std::chrono::high_resolution_clock::now();
-    bubble_sort(array, array_size);
+    bubble_sort(array);
     finish_timing(t1);
 }
 
-static int find_smallest(int * array, int array_size, int ii) {
+static size_t find_smallest(std::vector<int> & array, const size_t ii) {
     int ele_small = array[ii];
-    int position = ii;
-    for(int jj = ii + 1; jj < array_size; jj++) {
+    size_t position = ii;
+    for(size_t jj = ii + 1; jj < array.size(); jj++) {
         if(array[jj] < ele_small) {
             ele_small = array[jj];
             position = jj;
@@ -51,39 +54,40 @@ static int find_smallest(int * array, int array_size, int ii) {
     return position;
 }
 
-void selection_sort(int * array, int array_size) {
+void selection_sort(std::vector<int> & array) {
     std::cout << "Selection sort: ";
-    int pos, temp;
-    for(int ii = 0; ii < array_size; ii++) {
-        pos = find_smallest(array, array_size, ii);
+    int temp;
+    size_t pos;
+    for(size_t ii = 0; ii < array.size(); ii++) {
+        pos = find_smallest(array, ii);
         temp = array[ii];
         array[ii] = array[pos];
         array[pos] = temp;
     }
 }
 
-void timed_selection_sort(int * array, int array_size) {
+void timed_selection_sort(std::vector<int> & array) {
     auto t1 = std::chrono::high_resolution_clock::now();
-    selection_sort(array, array_size);
+    selection_sort(array);
     finish_timing(t1);
 }
 
-void insertion_sort(int * array, int array_size) {
+void insertion_sort(std::vector<int> & array) {
     std::cout << "Insertion sort: ";
-    for(int ii = 1; ii < array_size; ii++) {
-        int temp = array[ii];
-        int j = ii - 1;
-        while(j >= 0 && temp <= array[j]) {
-            array[j + 1] = array[j];
-            j--;
+    for(size_t ii = 1; ii < array.size(); ii++) {
+        size_t temp = static_cast<size_t>(array[ii]);
+        size_t jj = ii - 1;
+        while(jj > 0 && temp <= static_cast<size_t>(array[jj])) {
+            array[jj + 1] = array[jj];
+            jj--;
         }
-        array[j + 1] = temp;
+        array[jj + 1] = temp;
     }
 }
 
-void timed_insertion_sort(int * array, int array_size) {
+void timed_insertion_sort(std::vector<int> & array) {
     auto t1 = std::chrono::high_resolution_clock::now();
-    insertion_sort(array, array_size);
+    insertion_sort(array);
     finish_timing(t1);
 }
 
@@ -93,24 +97,24 @@ static void swap(int * a, int * b) {
     *b = t;
 }
 
-static int partition(int * array, int low, int high) {
-    int pivot = array[low];
-    int count = 0;
-    for (int ii = low + 1; ii <= high; ii++) {
-        if(array[ii] <= pivot) {
+static size_t partition(std::vector<int> & array, const size_t low, const size_t high) {
+    const size_t pivot = static_cast<size_t>(array[low]);
+    size_t count = 0;
+    for (size_t ii = low + 1; ii <= high; ii++) {
+        if(static_cast<size_t>(array[ii]) <= pivot) {
             count++;
         }
     }
     // Giving pivot element its correct position
-    int pivot_index = low + count;
+    const size_t pivot_index = low + count;
     swap(&array[pivot_index], &array[low]);
     // Sorting left and right parts of the pivot element
-    int ii = low, jj = high;
+    size_t ii = low, jj = high;
     while(ii < pivot_index && jj > pivot_index) {
-        while(array[ii] <= pivot) {
+        while(static_cast<size_t>(array[ii]) <= pivot) {
             ii++;
         }
-        while(array[jj] > pivot) {
+        while(static_cast<size_t>(array[jj]) > pivot) {
             jj--;
         }
         if(ii < pivot_index && jj > pivot_index) {
@@ -120,26 +124,27 @@ static int partition(int * array, int low, int high) {
     return pivot_index;
 }
 
-void timed_quick_sort(int * array, int low, int high) {
+void quick_sort(std::vector<int> & array, const size_t low, const size_t high) {
+    if(low < high) {
+        const size_t pivot = partition(array, low, high);
+        quick_sort(array, low, pivot - 1);
+        quick_sort(array, pivot + 1, high);
+    }
+}
+
+void timed_quick_sort(std::vector<int> & array, const size_t low, const size_t high) {
     auto t1 = std::chrono::high_resolution_clock::now();
     std::cout << "Quick sort: \t";
     quick_sort(array, low, high);
     finish_timing(t1);
 }
 
-void quick_sort(int * array, int low, int high) {
-    if(low < high) {
-        const int pivot = partition(array, low, high);
-        quick_sort(array, low, pivot - 1);
-        quick_sort(array, pivot + 1, high);
-    }
-}
-
-static void merge(int * array, int array_size, int low, int high, int mid) {
-    int cc[array_size];
-    int ii = low;
-    int kk = low;
-    int jj = mid + 1;
+static void merge(std::vector<int> & array, const size_t low, const size_t high, const size_t mid) {
+    std::vector<int> cc;
+    cc.reserve(array.size());
+    size_t ii = low;
+    size_t kk = low;
+    size_t jj = mid + 1;
     while(ii <= mid && jj <= high) {
         if(array[ii] < array[jj]) {
             cc[kk] = array[ii];
@@ -167,38 +172,32 @@ static void merge(int * array, int array_size, int low, int high, int mid) {
     }
 }
 
-void timed_merge_sort(int * array, int array_size, int low, int high) {
-    auto t1 = std::chrono::high_resolution_clock::now();
-    std::cout << "Merge sort: \t";
-    merge_sort(array, array_size, low, high);
-    finish_timing(t1);
-}
-
-void merge_sort(int * array, int array_size, int low, int high) {
+void merge_sort(std::vector<int> & array, const size_t low, const size_t high) {
     if(low < high){
         //divide the array at mid and sort independently using merge sort
-        const int mid = (low + high) / 2;
-        merge_sort(array, array_size, low, mid);
-        merge_sort(array, array_size, mid + 1, high);
+        const size_t mid = (low + high) / 2;
+        merge_sort(array, low, mid);
+        merge_sort(array, mid + 1, high);
         //merge or conquer sorted arrays
-        merge(array, array_size, low, high, mid);
+        merge(array, low, high, mid);
     }
 }
 
-void timed_shell_sort(int * array, int array_size) {
+void timed_merge_sort(std::vector<int> & array, const size_t low, const size_t high) {
     auto t1 = std::chrono::high_resolution_clock::now();
-    shell_sort(array, array_size);
+    std::cout << "Merge sort: \t";
+    merge_sort(array, low, high);
     finish_timing(t1);
 }
 
-void shell_sort(int * array, int array_size) {
+void shell_sort(std::vector<int> & array) {
     std::cout << "Shell sort: \t";
-    for(int gap = array_size / 2; gap > 0; gap /= 2) {
-        for(int ii = gap; ii < array_size; ii++) {
+    for(size_t gap = array.size() / 2; gap > 0; gap /= 2) {
+        for(size_t ii = gap; ii < array.size(); ii++) {
             //sort sub lists created by applying gap
-            int temp = array[ii];
-            int jj;
-            for(jj = ii; jj >= gap && array[jj - gap] > temp; jj -= gap) {
+            const size_t temp = static_cast<size_t>(array[ii]);
+            size_t jj;
+            for(jj = ii; jj >= gap && static_cast<size_t>(array[jj - gap]) > temp; jj -= gap) {
                 array[jj] = array[jj - gap];
             }
             array[jj] = temp;
@@ -206,18 +205,23 @@ void shell_sort(int * array, int array_size) {
     }
 }
 
+void timed_shell_sort(std::vector<int> & array) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    shell_sort(array);
+    finish_timing(t1);
+}
 
 // function to heapify the tree
-static void heapify(int * array, int array_size, int root) {
-    int largest = root; // root is the largest element
-    const int ll = 2 * root + 1;
-    const int rr = 2 * root + 2;
+static void heapify(std::vector<int> & array, const size_t array_size, const size_t root) {
+    size_t largest = root; // root is the largest element
+    const size_t ll = 2 * root + 1;
+    const size_t rr = 2 * root + 2;
     // If left child is larger than root
-    if(ll < array_size && array[ll] > array[largest]) {
+    if(ll < array.size() && array[ll] > array[largest]) {
         largest = ll;
     }
     // If right child is larger than largest so far
-    if(rr < array_size && array[rr] > array[largest]) {
+    if(rr < array.size() && array[rr] > array[largest]) {
         largest = rr;
     }
     // If largest is not root
@@ -229,23 +233,33 @@ static void heapify(int * array, int array_size, int root) {
     }
 }
 
-void timed_heap_sort(int * array, int array_size) {
-    auto t1 = std::chrono::high_resolution_clock::now();
-    heap_sort(array, array_size);
-    finish_timing(t1);
-}
-
-void heap_sort(int * array, int array_size) {
+void heap_sort(std::vector<int> & array) {
     std::cout << "Heap sort: \t";
     // build heap
-    for(int ii = array_size / 2 - 1; ii >= 0; ii--) {
-        heapify(array, array_size, ii);
+    for(size_t ii = array.size() / 2 - 1; ii > 0; ii--) {
+        heapify(array, array.size(), ii);
     }
     // extracting elements from heap one by one
-    for(int ii = array_size - 1; ii >= 0; ii--) {
+    for(size_t ii = array.size() - 1; ii > 0; ii--) {
         // Move current root to end
         swap(&array[0], &array[ii]);
         // again call max heapify on the reduced heap
         heapify(array, ii, 0);
     }
+}
+
+void timed_heap_sort(std::vector<int> & array) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    heap_sort(array);
+    finish_timing(t1);
+}
+
+void run_all_timed_sorts(std::vector<std::vector<int>> & arrays) {
+    timed_bubble_sort(arrays[static_cast<size_t>(Sort_Type::Bubble_Sort)]);
+    timed_selection_sort(arrays[static_cast<size_t>(Sort_Type::Selection_Sort)]);
+    timed_insertion_sort(arrays[static_cast<size_t>(Sort_Type::Insertion_Sort)]);
+    timed_quick_sort(arrays[static_cast<size_t>(Sort_Type::Quick_Sort)], 0, arrays[static_cast<size_t>(Sort_Type::Quick_Sort)].size() - 1);
+    timed_merge_sort(arrays[static_cast<size_t>(Sort_Type::Merge_Sort)], 0, arrays[static_cast<size_t>(Sort_Type::Merge_Sort)].size() - 1);
+    timed_shell_sort(arrays[static_cast<size_t>(Sort_Type::Shell_Sort)]);
+    timed_heap_sort(arrays[static_cast<size_t>(Sort_Type::Heap_Sort)]);
 }
