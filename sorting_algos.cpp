@@ -75,13 +75,13 @@ void timed_selection_sort(std::vector<int> & array) {
 void insertion_sort(std::vector<int> & array) {
     std::cout << "Insertion sort: ";
     for(size_t ii = 1; ii < array.size(); ii++) {
-        size_t temp = static_cast<size_t>(array[ii]);
-        size_t jj = ii - 1;
-        while(jj > 0 && temp <= static_cast<size_t>(array[jj])) {
-            array[jj + 1] = array[jj];
+        const int temp = array[ii];
+        int jj = static_cast<int>(ii - 1);
+        while(jj >= 0 && temp <= array[static_cast<size_t>(jj)]) {
+            array[static_cast<size_t>(jj + 1)] = array[static_cast<size_t>(jj)];
             jj--;
         }
-        array[jj + 1] = temp;
+        array[static_cast<size_t>(jj + 1)] = temp;
     }
 }
 
@@ -262,4 +262,9 @@ void run_all_timed_sorts(std::vector<std::vector<int>> & arrays) {
     timed_merge_sort(arrays[static_cast<size_t>(Sort_Type::Merge_Sort)], 0, arrays[static_cast<size_t>(Sort_Type::Merge_Sort)].size() - 1);
     timed_shell_sort(arrays[static_cast<size_t>(Sort_Type::Shell_Sort)]);
     timed_heap_sort(arrays[static_cast<size_t>(Sort_Type::Heap_Sort)]);
+}
+
+void run_insertion_sort_with_print(std::vector<int> & array) {
+    timed_insertion_sort(array);
+    print_array(array);
 }

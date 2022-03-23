@@ -30,5 +30,6 @@ void heap_sort(std::vector<int> & array);
 void timed_heap_sort(std::vector<int> & array);
 
 void run_all_timed_sorts(std::vector<std::vector<int>> & arrays);
+void run_insertion_sort_with_print(std::vector<int> & array);
 
 #endif //SORTING_ALGOS_HPP
