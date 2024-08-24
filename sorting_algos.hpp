@@ -1,7 +1,6 @@
-#ifndef SORTING_ALGOS_HPP
-#define SORTING_ALGOS_HPP
+#pragma once
 
-#include <vector>
+#include "namespaces.hpp"
 
 enum class Sort_Type : size_t {
     Bubble_Sort = 0,
@@ -11,25 +10,25 @@ enum class Sort_Type : size_t {
     Merge_Sort,
     Shell_Sort,
     Heap_Sort,
+
+    Total_Sorts
 };
 
-void print_array(std::vector<int> & array);
-void bubble_sort(std::vector<int> & array);
-void timed_bubble_sort(std::vector<int> & array);
-void selection_sort(std::vector<int> & array);
-void timed_selection_sort(std::vector<int> & array);
-void insertion_sort(std::vector<int> & array);
-void timed_insertion_sort(std::vector<int> & array);
-void quick_sort(std::vector<int> & arr, size_t low, size_t high);
-void timed_quick_sort(std::vector<int> & arr, size_t low, size_t high);
-void merge_sort(std::vector<int> & array, size_t low, size_t high);
-void timed_merge_sort(std::vector<int> & array, size_t low, size_t high);
-void shell_sort(std::vector<int> & array);
-void timed_shell_sort(std::vector<int> & array);
-void heap_sort(std::vector<int> & array);
-void timed_heap_sort(std::vector<int> & array);
+void bubble_sort(std::vector<int> &values);
+void selection_sort(std::vector<int> &values);
+void insertion_sort(std::vector<int> &values);
+void quick_sort(std::vector<int> &values, const size_t low, const size_t high);
+void merge_sort(std::vector<int> &values, const size_t low, const size_t high);
+void shell_sort(std::vector<int> &values);
+void heap_sort(std::vector<int> &values);
+void timed_bubble_sort(std::vector<int> &values);
 
-void run_all_timed_sorts(std::vector<std::vector<int>> & arrays);
-void run_insertion_sort_with_print(std::vector<int> & array);
+void timed_selection_sort(std::vector<int> &values);
+void timed_insertion_sort(std::vector<int> &values);
+void timed_quick_sort(std::vector<int> &values, const size_t low, const size_t high);
+void timed_merge_sort(std::vector<int> &values, const size_t low, const size_t high);
+void timed_shell_sort(std::vector<int> &values);
+void timed_heap_sort(std::vector<int> &values);
 
-#endif //SORTING_ALGOS_HPP
+void run_all_timed_sorts(All_Values &all_values);
+void run_insertion_sort_with_print(std::vector<int> &values);
