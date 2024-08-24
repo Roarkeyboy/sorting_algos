@@ -8,12 +8,12 @@
 
 static void print_array(std::vector<int> &values) {
     for(size_t ii = 0; ii < values.size(); ii++) {
-        std::cout << values[ii] << "\t";
+        std::cout << values[ii] << ", ";
     }
     std::cout << '\n';
 }
 
-static void finish_timing(const auto &t1) {
+static constexpr void finish_timing(const auto &t1) {
     const auto t2 = std::chrono::high_resolution_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1) << '\n';
 }
@@ -49,7 +49,6 @@ static constexpr size_t find_smallest(std::vector<int> &values, const size_t ii)
 
 void selection_sort(std::vector<int> &values) {
     std::cout << "Selection sort: ";
-    int temp;
     size_t pos;
     for(size_t ii = 0; ii < values.size(); ii++) {
         pos = find_smallest(values, ii);
@@ -82,7 +81,7 @@ void timed_insertion_sort(std::vector<int> &values) {
     finish_timing(t1);
 }
 
-static size_t partition(std::vector<int> &values, const size_t low, const size_t high) {
+static constexpr size_t partition(std::vector<int> &values, const size_t low, const size_t high) {
     const size_t pivot = static_cast<size_t>(values[low]);
     size_t count = 0;
     for (size_t ii = low + 1; ii <= high; ii++) {
@@ -94,7 +93,9 @@ static size_t partition(std::vector<int> &values, const size_t low, const size_t
     const size_t pivot_index = low + count;
     std::swap(values[pivot_index], values[low]);
     // Sorting left and right parts of the pivot element
-    size_t ii = low, jj = high;
+    size_t ii = low;
+    size_t jj = high;
+
     while(ii < pivot_index && jj > pivot_index) {
         while(static_cast<size_t>(values[ii]) <= pivot) {
             ii++;
@@ -110,8 +111,11 @@ static size_t partition(std::vector<int> &values, const size_t low, const size_t
 }
 
 void quick_sort(std::vector<int> &values, const size_t low, const size_t high) {
-    if(low < high) {
+    if(low < high && !values.empty()) {
         const size_t pivot = partition(values, low, high);
+        if(pivot == 0) {
+            return;
+        }
         quick_sort(values, low, pivot - 1);
         quick_sort(values, pivot + 1, high);
     }
@@ -196,7 +200,7 @@ void timed_shell_sort(std::vector<int> &values) {
 }
 
 // function to heapify the tree
-static void heapify(std::vector<int> &values, const size_t array_size, const size_t root) {
+static constexpr void heapify(std::vector<int> &values, const size_t array_size, const size_t root) {
     size_t largest = root; // root is the largest element
     const size_t ll = 2 * root + 1;
     const size_t rr = 2 * root + 2;
@@ -239,13 +243,15 @@ void timed_heap_sort(std::vector<int> &values) {
 }
 
 void run_all_timed_sorts(All_Values &all_values) {
-    timed_bubble_sort(all_values[static_cast<size_t>(Sort_Type::Bubble_Sort)]);
-    timed_selection_sort(all_values[static_cast<size_t>(Sort_Type::Selection_Sort)]);
-    timed_insertion_sort(all_values[static_cast<size_t>(Sort_Type::Insertion_Sort)]);
-    timed_quick_sort(all_values[static_cast<size_t>(Sort_Type::Quick_Sort)], 0, all_values[static_cast<size_t>(Sort_Type::Quick_Sort)].size() - 1);
-    timed_merge_sort(all_values[static_cast<size_t>(Sort_Type::Merge_Sort)], 0, all_values[static_cast<size_t>(Sort_Type::Merge_Sort)].size() - 1);
-    timed_shell_sort(all_values[static_cast<size_t>(Sort_Type::Shell_Sort)]);
-    timed_heap_sort(all_values[static_cast<size_t>(Sort_Type::Heap_Sort)]);
+    using enum Sort_Type;
+    using Type = std::underlying_type_t<Sort_Type>;
+    timed_bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
+    timed_selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
+    timed_insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
+    timed_quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+    timed_merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Merge_Sort)].size() - 1);
+    timed_shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
+    timed_heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
 }
 
 void run_insertion_sort_with_print(std::vector<int> &values) {
