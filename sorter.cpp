@@ -23,10 +23,11 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    All_Values arrays(static_cast<size_t>(Sort_Type::Total_Sorts));
+    All_Values all_values(static_cast<size_t>(Sort_Type::Total_Sorts));
+    init_arrays(all_values, array_size);
 
-    init_arrays(arrays, array_size);
-    run_all_timed_sorts(arrays);
+    Sorter sorter(std::move(all_values));
+    sorter.run_all_timed_sorts();
 
     return EXIT_SUCCESS;
 }
