@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <utility>
 
 #pragma GCC optimize("Ofast")
 #pragma GCC target("avx,avx2,fma")
@@ -115,68 +116,66 @@ void Sorter::sort(All_Values &all_values, const Sort_Type sort_type, const Sort_
     switch(sort_type) {
         using enum Sort_Type;
         using enum Sort_Timed;
-        using Type = std::underlying_type_t<Sort_Type>;
 
         case Bubble_Sort:
             if(sort_timed == Untimed) {
-                bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
+                bubble_sort(all_values[std::to_underlying(Bubble_Sort)]);
             }
             else {
-                timed_bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
+                timed_bubble_sort(all_values[std::to_underlying(Bubble_Sort)]);
             }
             break;
         case Selection_Sort:
             if(sort_timed == Untimed) {
-                selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
+                selection_sort(all_values[std::to_underlying(Selection_Sort)]);
             }
             else {
-                timed_selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
+                timed_selection_sort(all_values[std::to_underlying(Selection_Sort)]);
             }
             break;
         case Insertion_Sort:
             if(sort_timed == Untimed) {
-                insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
+                insertion_sort(all_values[std::to_underlying(Insertion_Sort)]);
             }
             else {
-                timed_insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
+                timed_insertion_sort(all_values[std::to_underlying(Insertion_Sort)]);
             }
             break;
         case Quick_Sort:
             if(sort_timed == Untimed) {
-                quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+                quick_sort(all_values[std::to_underlying(Quick_Sort)], 0, all_values[std::to_underlying(Quick_Sort)].size() - 1);
             }
             else {
-                timed_quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+                timed_quick_sort(all_values[std::to_underlying(Quick_Sort)], 0, all_values[std::to_underlying(Quick_Sort)].size() - 1);
             }
             break;
         case Merge_Sort:
             if(sort_timed == Untimed) {
-                merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+                merge_sort(all_values[std::to_underlying(Merge_Sort)], 0, all_values[std::to_underlying(Quick_Sort)].size() - 1);
             }
             else {
-                timed_merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+                timed_merge_sort(all_values[std::to_underlying(Merge_Sort)], 0, all_values[std::to_underlying(Quick_Sort)].size() - 1);
             }
             break;
         case Shell_Sort:
             if(sort_timed == Untimed) {
-                shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
+                shell_sort(all_values[std::to_underlying(Shell_Sort)]);
             }
             else {
-                timed_shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
+                timed_shell_sort(all_values[std::to_underlying(Shell_Sort)]);
             }
             break;
         case Heap_Sort:
             if(sort_timed == Untimed) {
-                heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
+                heap_sort(all_values[std::to_underlying(Heap_Sort)]);
             }
             else {
-                timed_heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
+                timed_heap_sort(all_values[std::to_underlying(Heap_Sort)]);
             }
             break;
-        
+
         case Total_Sorts:
-            // Should not hit this case
-            break;
+            std::unreachable();
     }
 }
 
@@ -307,11 +306,11 @@ void Sorter::timed_heap_sort(std::vector<int> &values) {
 void Sorter::run_all_timed_sorts(All_Values &all_values) {
     using enum Sort_Type;
     using Type = std::underlying_type_t<Sort_Type>;
-    timed_bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
-    timed_selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
-    timed_insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
-    timed_quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
-    timed_merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Merge_Sort)].size() - 1);
-    timed_shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
-    timed_heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
+    timed_bubble_sort(all_values[std::to_underlying(Bubble_Sort)]);
+    timed_selection_sort(all_values[std::to_underlying(Selection_Sort)]);
+    timed_insertion_sort(all_values[std::to_underlying(Insertion_Sort)]);
+    timed_quick_sort(all_values[std::to_underlying(Quick_Sort)], 0, all_values[std::to_underlying(Quick_Sort)].size() - 1);
+    timed_merge_sort(all_values[std::to_underlying(Merge_Sort)], 0, all_values[std::to_underlying(Merge_Sort)].size() - 1);
+    timed_shell_sort(all_values[std::to_underlying(Shell_Sort)]);
+    timed_heap_sort(all_values[std::to_underlying(Heap_Sort)]);
 }

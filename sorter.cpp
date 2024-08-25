@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 
 #include "random_fill.hpp"
 #include "sorting_algos.hpp"
@@ -23,7 +24,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    All_Values all_values(static_cast<size_t>(Sort_Type::Total_Sorts));
+    All_Values all_values(std::to_underlying(Sort_Type::Total_Sorts));
     init_arrays(all_values, array_size);
 
     Sorter::run_all_timed_sorts(all_values);
