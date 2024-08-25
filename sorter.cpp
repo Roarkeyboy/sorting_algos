@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
     All_Values all_values(static_cast<size_t>(Sort_Type::Total_Sorts));
     init_arrays(all_values, array_size);
 
-    Sorter sorter(std::move(all_values));
-    sorter.run_all_timed_sorts();
+    Sorter::run_all_timed_sorts(all_values);
+    Sorter::sort(all_values, Sort_Type::Bubble_Sort, Sort_Timed::Timed);
 
     return EXIT_SUCCESS;
 }

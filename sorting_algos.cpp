@@ -40,10 +40,8 @@ constexpr size_t partition(std::vector<int> &values, const size_t low, const siz
             count++;
         }
     }
-    // Giving pivot element its correct position
     const size_t pivot_index = low + count;
     std::swap(values[pivot_index], values[low]);
-    // Sorting left and right parts of the pivot element
     size_t ii = low;
     size_t jj = high;
 
@@ -94,29 +92,94 @@ constexpr void merge(std::vector<int> &values, const size_t low, const size_t hi
 }
 
 constexpr void heapify(std::vector<int> &values, const size_t array_size, const size_t root) {
-    size_t largest = root; // root is the largest element
+    size_t largest = root;
     const size_t ll = 2 * root + 1;
     const size_t rr = 2 * root + 2;
-    // If left child is larger than root
     if(ll < values.size() && values[ll] > values[largest]) {
         largest = ll;
     }
-    // If right child is larger than largest so far
+
     if(rr < values.size() && values[rr] > values[largest]) {
         largest = rr;
     }
-    // If largest is not root
+
     if(largest != root) {
-        //swap root and largest
         std::swap(values[root], values[largest]);
-        // Recursively heapify the sub-tree
         heapify(values, array_size, largest);
     }
 }
 
 } // namespace
 
-Sorter::Sorter(const All_Values &all_values_in) : all_values(all_values_in) {}
+void Sorter::sort(All_Values &all_values, const Sort_Type sort_type, const Sort_Timed sort_timed) {
+    switch(sort_type) {
+        using enum Sort_Type;
+        using enum Sort_Timed;
+        using Type = std::underlying_type_t<Sort_Type>;
+
+        case Bubble_Sort:
+            if(sort_timed == Untimed) {
+                bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
+            }
+            else {
+                timed_bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
+            }
+            break;
+        case Selection_Sort:
+            if(sort_timed == Untimed) {
+                selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
+            }
+            else {
+                timed_selection_sort(all_values[static_cast<Type>(Selection_Sort)]);
+            }
+            break;
+        case Insertion_Sort:
+            if(sort_timed == Untimed) {
+                insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
+            }
+            else {
+                timed_insertion_sort(all_values[static_cast<Type>(Insertion_Sort)]);
+            }
+            break;
+        case Quick_Sort:
+            if(sort_timed == Untimed) {
+                quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+            }
+            else {
+                timed_quick_sort(all_values[static_cast<Type>(Quick_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+            }
+            break;
+        case Merge_Sort:
+            if(sort_timed == Untimed) {
+                merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+            }
+            else {
+                timed_merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Quick_Sort)].size() - 1);
+            }
+            break;
+        case Shell_Sort:
+            if(sort_timed == Untimed) {
+                shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
+            }
+            else {
+                timed_shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
+            }
+            break;
+        case Heap_Sort:
+            if(sort_timed == Untimed) {
+                heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
+            }
+            else {
+                timed_heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
+            }
+            break;
+        
+        case Total_Sorts:
+            // Should not hit this case
+            break;
+    }
+}
+
 
 void Sorter::bubble_sort(std::vector<int> &values) {
     std::cout << "Bubble sort: \t";
@@ -189,11 +252,9 @@ void Sorter::timed_quick_sort(std::vector<int> &values, const size_t low, const 
 
 void Sorter::merge_sort(std::vector<int> &values, const size_t low, const size_t high) {
     if(low < high){
-        //divide the array at mid and sort independently using merge sort
         const size_t mid = (low + high) / 2;
         merge_sort(values, low, mid);
         merge_sort(values, mid + 1, high);
-        //merge or conquer sorted arrays
         merge(values, low, high, mid);
     }
 }
@@ -209,7 +270,6 @@ void Sorter::shell_sort(std::vector<int> &values) {
     std::cout << "Shell sort: \t";
     for(size_t gap = values.size() / 2; gap > 0; gap /= 2) {
         for(size_t ii = gap; ii < values.size(); ii++) {
-            //sort sub lists created by applying gap
             const size_t temp = static_cast<size_t>(values[ii]);
             size_t jj;
             for(jj = ii; jj >= gap && static_cast<size_t>(values[jj - gap]) > temp; jj -= gap) {
@@ -228,15 +288,12 @@ void Sorter::timed_shell_sort(std::vector<int> &values) {
 
 void Sorter::heap_sort(std::vector<int> &values) {
     std::cout << "Heap sort: \t";
-    // build heap
     for(size_t ii = values.size() / 2 - 1; ii > 0; ii--) {
         heapify(values, values.size(), ii);
     }
-    // extracting elements from heap one by one
+
     for(size_t ii = values.size() - 1; ii > 0; ii--) {
-        // Move current root to end
         std::swap(values[0], values[ii]);
-        // again call max heapify on the reduced heap
         heapify(values, ii, 0);
     }
 }
@@ -247,7 +304,7 @@ void Sorter::timed_heap_sort(std::vector<int> &values) {
     finish_timing(t1);
 }
 
-void Sorter::run_all_timed_sorts() {
+void Sorter::run_all_timed_sorts(All_Values &all_values) {
     using enum Sort_Type;
     using Type = std::underlying_type_t<Sort_Type>;
     timed_bubble_sort(all_values[static_cast<Type>(Bubble_Sort)]);
@@ -257,9 +314,4 @@ void Sorter::run_all_timed_sorts() {
     timed_merge_sort(all_values[static_cast<Type>(Merge_Sort)], 0, all_values[static_cast<Type>(Merge_Sort)].size() - 1);
     timed_shell_sort(all_values[static_cast<Type>(Shell_Sort)]);
     timed_heap_sort(all_values[static_cast<Type>(Heap_Sort)]);
-}
-
-void Sorter::run_insertion_sort_with_print(std::vector<int> &values) {
-    timed_insertion_sort(values);
-    print_array(values);
 }
